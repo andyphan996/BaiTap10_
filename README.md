@@ -1,8 +1,3 @@
-# BaiTap10 - Demo JWT với Spring Boot 3 – Security 6
-
-Project ví dụ theo bài giảng **Json Web Token** (Lập trình Web – WEBPR330479, ThS. Nguyễn Hữu Trung).
-Người dùng đăng ký tài khoản, đăng nhập để nhận JWT, rồi gửi JWT trong header
-`Authorization: Bearer <token>` để truy cập các API được bảo vệ.
 
 - Thư viện JWT: **Nimbus JOSE + JWT** (`com.nimbusds:nimbus-jose-jwt` 10.5), ký bằng HMAC‑SHA256 (HS256).
   Phiên bản đầu tiên dùng `io.jsonwebtoken` (jjwt) 0.12.6 theo bài giảng, xem ở commit đầu của repo.
@@ -30,7 +25,7 @@ src/main/resources
 
 ## Cấu hình
 
-Sửa `src/main/resources/application.properties` cho đúng MySQL của bạn
+Sửa `src/main/resources/application.properties` cho đúng MySQL 
 (database `jwt_springboot3` sẽ được tự tạo nếu chưa có):
 
 ```properties

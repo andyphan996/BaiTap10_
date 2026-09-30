@@ -1,6 +1,6 @@
 
 - Thư viện JWT: **Nimbus JOSE + JWT** (`com.nimbusds:nimbus-jose-jwt` 10.5), ký bằng HMAC‑SHA256 (HS256).
-  Phiên bản đầu tiên dùng `io.jsonwebtoken` (jjwt) 0.12.6 theo bài giảng, xem ở commit đầu của repo.
+  Phiên bản đầu tiên dùng `io.jsonwebtoken` (jjwt) 0.12.6 theo bài giảng.
 - Spring Boot 3.5, Spring Security 6, Spring Data JPA, Thymeleaf, MySQL, Lombok
 - Java 17 trở lên
 

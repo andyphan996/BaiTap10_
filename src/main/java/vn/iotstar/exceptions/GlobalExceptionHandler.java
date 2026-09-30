@@ -1,5 +1,7 @@
 package vn.iotstar.exceptions;
 
+import java.text.ParseException;
+
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -8,9 +10,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.security.SignatureException;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.proc.BadJOSEException;
+import com.nimbusds.jose.proc.BadJWSException;
+import com.nimbusds.jwt.proc.ExpiredJWTException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -39,18 +42,20 @@ public class GlobalExceptionHandler {
 			errorDetail.setProperty("description", "You are not authorized to access this resource");
 		}
 
-		if (exception instanceof SignatureException) {
+		if (exception instanceof BadJWSException) {
 			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
 			errorDetail.setProperty("description", "The JWT signature is invalid");
 		}
 
-		if (exception instanceof ExpiredJwtException) {
+		if (exception instanceof ExpiredJWTException) {
 			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
 			errorDetail.setProperty("description", "The JWT token has expired");
 		}
 
 		// Cac loi JWT khac (chuoi token sai dinh dang, ...)
-		if (errorDetail == null && exception instanceof JwtException) {
+		if (errorDetail == null && (exception instanceof ParseException
+				|| exception instanceof BadJOSEException
+				|| exception instanceof JOSEException)) {
 			errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
 			errorDetail.setProperty("description", "The JWT token is invalid");
 		}

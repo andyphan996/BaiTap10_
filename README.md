@@ -4,7 +4,8 @@ Project ví dụ theo bài giảng **Json Web Token** (Lập trình Web – WEBP
 Người dùng đăng ký tài khoản, đăng nhập để nhận JWT, rồi gửi JWT trong header
 `Authorization: Bearer <token>` để truy cập các API được bảo vệ.
 
-- Thư viện JWT: `io.jsonwebtoken` (jjwt) 0.12.6, ký bằng HMAC‑SHA256 (HS256)
+- Thư viện JWT: **Nimbus JOSE + JWT** (`com.nimbusds:nimbus-jose-jwt` 10.5), ký bằng HMAC‑SHA256 (HS256).
+  Phiên bản đầu tiên dùng `io.jsonwebtoken` (jjwt) 0.12.6 theo bài giảng, xem ở commit đầu của repo.
 - Spring Boot 3.5, Spring Security 6, Spring Data JPA, Thymeleaf, MySQL, Lombok
 - Java 17 trở lên
 
@@ -88,5 +89,17 @@ curl http://localhost:8005/users/   -H "Authorization: Bearer <token>"
 | Thông tin đăng nhập không hợp lệ | BadCredentialsException | 401 |
 | Tài khoản bị khóa | AccountStatusException | 403 |
 | Không được phép truy cập tài nguyên | AccessDeniedException | 403 |
-| JWT không hợp lệ (sai chữ ký, sai định dạng) | SignatureException / JwtException | 401 |
-| JWT đã hết hạn | ExpiredJwtException | 401 |
+| JWT sai chữ ký | BadJWSException | 401 |
+| JWT sai định dạng / không hợp lệ | ParseException / BadJOSEException | 401 |
+| JWT đã hết hạn | ExpiredJWTException | 401 |
+
+## Chuyển từ jjwt sang Nimbus JOSE + JWT
+
+Chỉ có `pom.xml`, `JwtService` và `GlobalExceptionHandler` thay đổi; filter, controller, API và dữ liệu trả về giữ nguyên.
+
+| Việc | jjwt | Nimbus |
+|---|---|---|
+| Tạo payload | `Jwts.builder().claims(...).subject(...)` | `new JWTClaimsSet.Builder().claim(...).subject(...)` |
+| Ký token | `.signWith(key, Jwts.SIG.HS256).compact()` | `signedJWT.sign(new MACSigner(key)); signedJWT.serialize()` |
+| Kiểm tra token | `Jwts.parser().verifyWith(key).build().parseSignedClaims(token)` | `DefaultJWTProcessor` + `JWSVerificationKeySelector` + `ImmutableSecret` |
+| Đọc claims | `Claims::getSubject`, `Claims::getExpiration` | `JWTClaimsSet::getSubject`, `JWTClaimsSet::getExpirationTime` |
